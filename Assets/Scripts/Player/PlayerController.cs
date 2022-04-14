@@ -5,6 +5,7 @@ using Photon.Pun;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
 {
@@ -23,6 +24,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
     int itemIndex;
     int previousItemIndex = -1;
 
+    private GameObject UICanvas;
     float verticalLookRotation;
     bool isgrounded;
     Vector3 SmoothMoveVelocity;
@@ -33,6 +35,8 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
 
     PhotonView PV;
 
+
+    private Slider HealthSlider;
     const float maxHealth = 100f;
     float currentHealth = maxHealth;
 
@@ -46,7 +50,10 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
 
         PV = GetComponent<PhotonView>();
 
+        
+        HealthSlider = GetComponentInChildren<Slider>();
 
+       
         PlayerManager = PhotonView.Find((int)PV.InstantiationData[0]).GetComponent<PlayerManager>();
     }
 
@@ -55,11 +62,14 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
         if (PV.IsMine)
         {
             EquipItem(0);
+            HealthSlider.maxValue = maxHealth;
+            HealthSlider.value = currentHealth;
         }
         else
         {
             Destroy(GetComponentInChildren<Camera>().gameObject);
             Destroy(rb);
+            Destroy(HealthSlider.transform.parent.gameObject);
         }
     }
 
@@ -100,14 +110,17 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
             else EquipItem(itemIndex - 1);
         }
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButton(0))
         {
             items[itemIndex].Use();
         }
 
 
 
-       
+       if (Input.GetKeyDown(KeyCode.K))
+        {
+            TakeDamage(10);
+        }
     }
 
     IEnumerator StepSound()
@@ -194,9 +207,10 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
     void RPC_TakeDamge(float damage)
     {
         if (!PV.IsMine) return;
-        Debug.Log("Took Damage: " + damage);
-        currentHealth -= damage;
 
+        currentHealth -= damage;
+        HealthSlider.value = currentHealth;
+        Debug.Log("Took Damage: " + damage);
         if (currentHealth <= 0) Die();
     }
 
