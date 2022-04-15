@@ -73,7 +73,7 @@ public class SingleShotGun : Gun
             yield return null;
         }
         trail.transform.position = hit.point;
-        //stantiate(impactParticleSystem, hit.point, Quaternion.LookRotation(hit.normal));
+        Instantiate(impactParticleSystem, hit.point, Quaternion.LookRotation(hit.normal));
 
         Destroy(trail.gameObject, trail.time);
     }

@@ -478,7 +478,7 @@ MonoBehaviour:
   HasBulletSpread: 1
   BulletSpreadVarience: 0.01
   bulletTrail: {fileID: 6420636328749539004, guid: cc77d0a5b8af1b94bb985415a8c86064, type: 3}
-  impactParticleSystem: {fileID: 0}
+  impactParticleSystem: {fileID: 5308291336060037034, guid: 30ff597df4a7332418974e3497bbdef1, type: 3}
   ShootDelay: 0.5
 --- !u!1 &2236564177545126658
 GameObject:
