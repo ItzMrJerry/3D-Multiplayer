@@ -129,7 +129,11 @@ public class PlayerController : MonoBehaviourPunCallbacks, IDamageable
         aud.volume = Random.Range(0.05f, 0.15f);
         aud.pitch = Random.Range(0.8f, 1.1f);
         aud.Play();
-        yield return new WaitForSeconds(FootStepDelay);
+        if (Input.GetKey(KeyCode.LeftShift))
+            yield return new WaitForSeconds(FootStepDelay / 1.25f );
+        else 
+            yield return new WaitForSeconds(FootStepDelay);
+
         FootStepDone = true;
     }
 

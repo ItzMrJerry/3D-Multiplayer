@@ -9,6 +9,7 @@ public class PlayerManager : MonoBehaviour
     PhotonView PV;
 
     GameObject Controller;
+    public LvlManager lm;
 
     private void Awake()
     {
@@ -18,13 +19,17 @@ public class PlayerManager : MonoBehaviour
     {
         if (PV.IsMine)
         {
+            lm = GameObject.Find("LevelManager").GetComponent<LvlManager>();
             CreateController();
+            
         }
     }
     
     void CreateController()
     {
-        Controller = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "PlayerController"), Vector3.zero, Quaternion.identity, 0,new object[] { PV.ViewID});
+        int spawn = Random.Range(0, lm.GetComponent<LvlManager>().spawnPositions.Length);
+       
+        Controller = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "PlayerController"), lm.GetComponent<LvlManager>().spawnPositions[spawn].position, Quaternion.identity, 0,new object[] { PV.ViewID});
     }
 
     public void Die()

@@ -41,7 +41,9 @@ public class SingleShotGun : Gun
                 TrailRenderer trail = Instantiate(bulletTrail, itemGameobject.transform.position, Quaternion.identity);
                 StartCoroutine(SpawnTrail(trail, hit));
                 LastShot = Time.time;
-                hit.collider.gameObject.GetComponent<IDamageable>()?.TakeDamage(((GunInfo)iteminfo).damage);
+                hit.collider.transform.root.gameObject.GetComponent<IDamageable>()?.TakeDamage(((GunInfo)iteminfo).damage);
+                if (hit.collider.transform.root.gameObject.tag != "Player")
+                Instantiate(impactParticleSystem, hit.point, Quaternion.LookRotation(hit.normal));
             }
         }
     }
@@ -65,15 +67,22 @@ public class SingleShotGun : Gun
     {
         float time = 0;
         Vector3 startpos = trail.transform.position;
-        while (time < 1)
-        {
-            trail.transform.position = Vector3.Lerp(startpos, hit.point, time);
-            time += Time.deltaTime / trail.time;
+        //float dist = Vector3.Distance(startpos, hit.point);
+        //trail.time = trail.time / dist;
 
+       // Debug.Log("Distance: " + dist + " Time: " + );
+
+        while (time < 5)
+        {   
+            //float t = time * dist;
+            
+            trail.transform.position = Vector3.Lerp(startpos, hit.point,time);
+
+            time += Time.deltaTime / trail.time;
             yield return null;
         }
         trail.transform.position = hit.point;
-        Instantiate(impactParticleSystem, hit.point, Quaternion.LookRotation(hit.normal));
+        
 
         Destroy(trail.gameObject, trail.time);
     }
