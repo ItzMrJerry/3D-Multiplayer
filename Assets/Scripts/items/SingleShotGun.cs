@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using Photon.Pun;
+using Photon.Pun;
+using System.IO;
+
 public class SingleShotGun : Gun
 {
     [SerializeField] Camera cam;
@@ -18,6 +20,7 @@ public class SingleShotGun : Gun
     [SerializeField]
     private float ShootDelay = 0.5f;
     private float LastShot;
+    
 
     public override void Use()
     {
@@ -37,13 +40,16 @@ public class SingleShotGun : Gun
 
             if (Physics.Raycast(cam.transform.position,dir, out RaycastHit hit,float.MaxValue))
             {
-                //TrailRenderer trail = PhotonNetwork.Instantiate();
-                TrailRenderer trail = Instantiate(bulletTrail, itemGameobject.transform.position, Quaternion.identity);
+                GameObject TrailObject = PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "BulletTrail"), itemGameobject.transform.position,Quaternion.identity);
+                TrailRenderer trail = TrailObject.GetComponent<TrailRenderer>();
+                //TrailRenderer trail = Instantiate(bulletTrail, itemGameobject.transform.position, Quaternion.identity);
                 StartCoroutine(SpawnTrail(trail, hit));
                 LastShot = Time.time;
+
                 hit.collider.transform.root.gameObject.GetComponent<IDamageable>()?.TakeDamage(((GunInfo)iteminfo).damage);
                 if (hit.collider.transform.root.gameObject.tag != "Player")
-                Instantiate(impactParticleSystem, hit.point, Quaternion.LookRotation(hit.normal));
+                    PhotonNetwork.Instantiate(Path.Combine("PhotonPrefabs", "Decal"), hit.point, Quaternion.LookRotation(hit.normal));
+               // Instantiate(impactParticleSystem, hit.point, Quaternion.LookRotation(hit.normal));
             }
         }
     }
